@@ -1,0 +1,1738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arivo Driver App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #F5F5F5;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .app-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            max-width: 400px;
+            margin: 0 auto;
+            background: white;
+            position: relative;
+        }
+
+        /* Login Screen */
+        .login-screen {
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #1976D2 0%, #1565C0 100%);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo h1 {
+            color: white;
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .logo p {
+            color: rgba(255,255,255,0.8);
+            font-size: 16px;
+        }
+
+        .login-form {
+            background: white;
+            padding: 30px 20px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #E0E0E0;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #1976D2;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 16px;
+            background: #1976D2;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-primary:hover {
+            background: #1565C0;
+        }
+
+        .btn-primary:disabled {
+            background: #BDBDBD;
+            cursor: not-allowed;
+        }
+
+        .error-message {
+            background: #FFEBEE;
+            color: #E53935;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .otp-screen {
+            text-align: center;
+        }
+
+        .otp-inputs {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .otp-input {
+            width: 50px !important;
+            height: 50px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        /* Main App */
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding-bottom: 100px;
+            height: calc(100vh - 140px);
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .header {
+            background: #1976D2;
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h2 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .status-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-badge.online {
+            background: #4CAF50;
+        }
+
+        .status-badge.offline {
+            background: #757575;
+        }
+
+        /* Home Screen */
+        .home-content {
+            padding: 20px;
+        }
+
+        .trip-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .trip-status {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #333;
+        }
+
+        .trip-button {
+            width: 120px;
+            height: 120px;
+            border-radius: 60px;
+            border: none;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            margin: 0 auto 16px;
+            display: block;
+            transition: transform 0.2s;
+        }
+
+        .trip-button:hover {
+            transform: scale(1.05);
+        }
+
+        .trip-button.start {
+            background: #4CAF50;
+        }
+
+        .trip-button.end {
+            background: #E53935;
+        }
+
+        .info-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .info-card {
+            background: white;
+            padding: 16px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .info-card h4 {
+            color: #666;
+            font-size: 12px;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        .info-card p {
+            color: #333;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .battery-reminder {
+            background: #FFF3E0;
+            border-left: 4px solid #FF9800;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .battery-reminder h4 {
+            color: #F57C00;
+            margin-bottom: 4px;
+        }
+
+        .battery-reminder p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* Route Screen - Enhanced Map */
+        .map-container {
+            height: 300px;
+            background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+            border-radius: 16px;
+            margin: 20px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid #1976D2;
+            overflow: hidden;
+        }
+
+        .route-info {
+            padding: 20px;
+        }
+
+        .next-stop {
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border: 2px solid #1976D2;
+        }
+
+        .next-stop h3 {
+            color: #1976D2;
+            margin-bottom: 8px;
+        }
+
+        .eta {
+            color: #4CAF50;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .stops-list {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .stop-item {
+            padding: 16px 20px;
+            border-bottom: 1px solid #F0F0F0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .stop-item:last-child {
+            border-bottom: none;
+        }
+
+        .stop-item:hover {
+            background: #F8F9FA;
+        }
+
+        .stop-item.completed {
+            background: #E8F5E8;
+            border-left: 6px solid #4CAF50;
+        }
+
+        .stop-item.current {
+            background: #E3F2FD;
+            border-left: 6px solid #1976D2;
+            position: relative;
+        }
+
+        /* Messages Screen */
+        .messages-content {
+            padding: 20px;
+        }
+
+        .message-item {
+            background: white;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .message-item.alert {
+            border-left: 4px solid #E53935;
+        }
+
+        .message-item.info {
+            border-left: 4px solid #1976D2;
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .message-type {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .message-time {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .message-text {
+            color: #333;
+            line-height: 1.4;
+        }
+
+        .report-button {
+            background: #E53935;
+            color: white;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            width: 100%;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        /* Profile Screen */
+        .profile-content {
+            padding: 20px;
+        }
+
+        .profile-header {
+            background: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .profile-photo {
+            width: 80px;
+            height: 80px;
+            border-radius: 40px;
+            background: #1976D2;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: bold;
+            margin: 0 auto 16px;
+        }
+
+        .profile-name {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .profile-id {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .profile-section {
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .profile-item {
+            padding: 16px 20px;
+            border-bottom: 1px solid #F0F0F0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .profile-item:last-child {
+            border-bottom: none;
+        }
+
+        .profile-label {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .profile-value {
+            color: #333;
+            font-weight: 500;
+        }
+
+        .settings-section {
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .setting-item {
+            padding: 16px 20px;
+            border-bottom: 1px solid #F0F0F0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+
+        .toggle-switch {
+            width: 50px;
+            height: 28px;
+            background: #E0E0E0;
+            border-radius: 14px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .toggle-switch.active {
+            background: #1976D2;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 12px;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s;
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(22px);
+        }
+
+        .logout-button {
+            background: #E53935;
+            color: white;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            width: 100%;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 400px;
+            background: linear-gradient(135deg, #1976D2 0%, #1565C0 100%);
+            border-top: 3px solid #0D47A1;
+            display: flex;
+            padding: 12px 0 8px 0;
+            box-shadow: 0 -4px 20px rgba(25, 118, 210, 0.3);
+            border-radius: 20px 20px 0 0;
+            z-index: 100;
+        }
+
+        .nav-item {
+            flex: 1;
+            text-align: center;
+            padding: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 12px;
+            margin: 0 4px;
+            position: relative;
+        }
+
+        .nav-item.active {
+            color: #1976D2;
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .nav-item:not(.active) {
+            color: rgba(255,255,255,0.8);
+        }
+
+        .nav-item:not(.active):hover {
+            color: white;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            margin: 0 auto 4px;
+            transition: transform 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-item.active .nav-icon {
+            transform: scale(1.1);
+        }
+
+        .nav-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Professional SVG Icons */
+        .icon-dashboard {
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='currentColor' viewBox='0 0 24 24'%3E%3Cpath d='M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z'/%3E%3C/svg%3E") no-repeat center;
+            background-size: 20px 20px;
+        }
+
+        .icon-route {
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='currentColor' viewBox='0 0 24 24'%3E%3Cpath d='M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z'/%3E%3C/svg%3E") no-repeat center;
+            background-size: 20px 20px;
+        }
+
+        .icon-alerts {
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='currentColor' viewBox='0 0 24 24'%3E%3Cpath d='M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z'/%3E%3C/svg%3E") no-repeat center;
+            background-size: 20px 20px;
+        }
+
+        .icon-driver {
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='currentColor' viewBox='0 0 24 24'%3E%3Cpath d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/%3E%3C/svg%3E") no-repeat center;
+            background-size: 20px 20px;
+        }
+
+        /* Report Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin: 20px;
+            width: calc(100% - 40px);
+            max-width: 360px;
+        }
+
+        .modal h3 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .form-group textarea {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #E0E0E0;
+            border-radius: 12px;
+            font-size: 16px;
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .btn-secondary {
+            flex: 1;
+            padding: 12px;
+            background: #F5F5F5;
+            color: #333;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .btn-primary.small {
+            flex: 1;
+            padding: 12px;
+            font-size: 14px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Language Selector */
+        .language-selector {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .lang-btn {
+            padding: 8px 16px;
+            border: 2px solid #E0E0E0;
+            background: white;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .lang-btn.active {
+            border-color: #1976D2;
+            background: #1976D2;
+            color: white;
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .app-container {
+                max-width: 100%;
+            }
+            
+            .info-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Login Screen -->
+        <div id="loginScreen" class="login-screen">
+            <div class="logo">
+                <div class="login-logo">
+                    <!-- Logo placeholder - you can replace with your logo -->
+                    <div style="width: 80px; height: 80px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 36px; font-weight: bold; color: #1976D2; margin: 0 auto 20px; box-shadow: 0 4px 16px rgba(0,0,0,0.1);">A</div>
+                </div>
+                <h1>Arivo</h1>
+                <p>Driver App</p>
+            </div>
+            
+            <div class="login-form">
+                <div id="loginError" class="error-message hidden">
+                    Invalid phone number or OTP. Please try again.
+                </div>
+                
+                <div id="phoneLogin">
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="tel" id="phoneInput" placeholder="+91 98765 43210" maxlength="13">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Driver ID (Optional)</label>
+                        <input type="text" id="driverIdInput" placeholder="DRV001">
+                    </div>
+                    
+                    <button class="btn-primary" onclick="sendOTP()">Send OTP</button>
+                </div>
+                
+                <div id="otpLogin" class="hidden otp-screen">
+                    <p style="margin-bottom: 20px; color: #666;">Enter the 6-digit OTP sent to your phone</p>
+                    <div class="otp-inputs">
+                        <input type="text" class="otp-input" maxlength="1" oninput="moveToNext(this, 0)">
+                        <input type="text" class="otp-input" maxlength="1" oninput="moveToNext(this, 1)">
+                        <input type="text" class="otp-input" maxlength="1" oninput="moveToNext(this, 2)">
+                        <input type="text" class="otp-input" maxlength="1" oninput="moveToNext(this, 3)">
+                        <input type="text" class="otp-input" maxlength="1" oninput="moveToNext(this, 4)">
+                        <input type="text" class="otp-input" maxlength="1" oninput="moveToNext(this, 5)">
+                    </div>
+                    <button class="btn-primary" onclick="verifyOTP()">Verify OTP</button>
+                    <p style="margin-top: 16px; color: #666; font-size: 14px;">
+                        Didn't receive OTP? <span style="color: #1976D2; cursor: pointer;" onclick="sendOTP()">Resend</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main App -->
+        <div id="mainApp" class="hidden">
+            <!-- Header -->
+            <div class="header">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div class="header-logo">
+                        <!-- Logo placeholder - you can replace with your logo -->
+                        <div style="width: 40px; height: 40px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; color: #1976D2;">A</div>
+                    </div>
+                    <h2 id="screenTitle">Arivo Driver App</h2>
+                </div>
+                <div class="status-badge" id="statusBadge">Offline</div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Home Screen -->
+                <div id="homeScreen" class="home-content">
+                    <!-- Trip Start Section -->
+                    <div id="tripStartSection" class="trip-card">
+                        <div class="trip-status">Ready to Start Trip</div>
+                        <button class="trip-button start" onclick="showStartTripDetails()">
+                            START<br>TRIP
+                        </button>
+                        <p style="color: #666; font-size: 14px; margin-top: 12px;">Complete pre-trip checklist before starting</p>
+                    </div>
+
+                    <!-- Starting Trip Details -->
+                    <div id="startTripDetails" class="hidden" style="background: white; border-radius: 16px; padding: 24px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <h3 style="color: #1976D2; margin-bottom: 20px; text-align: center;">🚌 Starting Your Trip</h3>
+                        
+                        <div style="background: #E3F2FD; padding: 16px; border-radius: 12px; margin-bottom: 20px;">
+                            <h4 style="color: #1976D2; margin-bottom: 12px;">Pre-Trip Checklist</h4>
+                            <div class="checklist-item" onclick="toggleChecklistItem(this)" style="display: flex; align-items: center; margin-bottom: 8px; cursor: pointer;">
+                                <div class="checkbox" style="width: 20px; height: 20px; border: 2px solid #1976D2; border-radius: 4px; margin-right: 12px; display: flex; align-items: center; justify-content: center;"></div>
+                                <span>Vehicle inspection completed</span>
+                            </div>
+                            <div class="checklist-item" onclick="toggleChecklistItem(this)" style="display: flex; align-items: center; margin-bottom: 8px; cursor: pointer;">
+                                <div class="checkbox" style="width: 20px; height: 20px; border: 2px solid #1976D2; border-radius: 4px; margin-right: 12px; display: flex; align-items: center; justify-content: center;"></div>
+                                <span>Fuel level checked</span>
+                            </div>
+                            <div class="checklist-item" onclick="toggleChecklistItem(this)" style="display: flex; align-items: center; margin-bottom: 8px; cursor: pointer;">
+                                <div class="checkbox" style="width: 20px; height: 20px; border: 2px solid #1976D2; border-radius: 4px; margin-right: 12px; display: flex; align-items: center; justify-content: center;"></div>
+                                <span>GPS and phone charged</span>
+                            </div>
+                            <div class="checklist-item" onclick="toggleChecklistItem(this)" style="display: flex; align-items: center; margin-bottom: 8px; cursor: pointer;">
+                                <div class="checkbox" style="width: 20px; height: 20px; border: 2px solid #1976D2; border-radius: 4px; margin-right: 12px; display: flex; align-items: center; justify-content: center;"></div>
+                                <span>Route information reviewed</span>
+                            </div>
+                        </div>
+
+                        <div style="background: #F5F5F5; padding: 16px; border-radius: 12px; margin-bottom: 20px;">
+                            <h4 style="margin-bottom: 12px;">Trip Information</h4>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                                <div>
+                                    <label style="font-size: 12px; color: #666; text-transform: uppercase;">Start Time</label>
+                                    <div id="startTimeDisplay" style="font-weight: 600; color: #333;">--:--</div>
+                                </div>
+                                <div>
+                                    <label style="font-size: 12px; color: #666; text-transform: uppercase;">Expected Duration</label>
+                                    <div style="font-weight: 600; color: #333;">2h 30m</div>
+                                </div>
+                            </div>
+                            <div>
+                                <label style="font-size: 12px; color: #666; text-transform: uppercase;">Route</label>
+                                <div style="font-weight: 600; color: #333;">Route 42A - Metro Station to Airport Terminal</div>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; gap: 12px;">
+                            <button onclick="cancelStartTrip()" style="flex: 1; padding: 12px; background: #F5F5F5; color: #333; border: none; border-radius: 8px; cursor: pointer;">Cancel</button>
+                            <button id="confirmStartBtn" onclick="confirmStartTrip()" style="flex: 2; padding: 12px; background: #BDBDBD; color: white; border: none; border-radius: 8px; cursor: not-allowed;" disabled>
+                                🚀 Confirm Start Trip
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Active Trip Section -->
+                    <div id="activeTripSection" class="hidden trip-card">
+                        <div class="trip-status">Trip in Progress</div>
+                        <button class="trip-button end" onclick="showEndTripDetails()">
+                            END<br>TRIP
+                        </button>
+                        <p id="tripTime" style="color: #666; font-size: 14px; margin-top: 12px;"></p>
+                        <div style="background: #E8F5E8; padding: 12px; border-radius: 8px; margin-top: 12px;">
+                            <div style="display: flex; justify-content: center; align-items: center;">
+                                <span style="color: #4CAF50; font-size: 14px;">🟢 Live Tracking Active</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ending Trip Details -->
+                    <div id="endTripDetails" class="hidden" style="background: white; border-radius: 16px; padding: 24px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <h3 style="color: #E53935; margin-bottom: 20px; text-align: center;">🏁 Ending Your Trip</h3>
+                        
+                        <div style="background: #FFEBEE; padding: 16px; border-radius: 12px; margin-bottom: 20px;">
+                            <h4 style="color: #E53935; margin-bottom: 12px;">Trip Summary</h4>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                                <div>
+                                    <label style="font-size: 12px; color: #666; text-transform: uppercase;">Total Distance</label>
+                                    <div id="tripDistance" style="font-weight: 600; color: #333;">45.2 km</div>
+                                </div>
+                                <div>
+                                    <label style="font-size: 12px; color: #666; text-transform: uppercase;">Total Passengers</label>
+                                    <div id="totalPassengers" style="font-weight: 600; color: #333;">127</div>
+                                </div>
+                                <div>
+                                    <label style="font-size: 12px; color: #666; text-transform: uppercase;">Stops Completed</label>
+                                    <div id="stopsCompleted" style="font-weight: 600; color: #333;">5/5</div>
+                                </div>
+                                <div>
+                                    <label style="font-size: 12px; color: #666; text-transform: uppercase;">Trip Duration</label>
+                                    <div id="finalTripDuration" style="font-weight: 600; color: #333;">2h 28m</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="background: #FFF3E0; padding: 16px; border-radius: 12px; margin-bottom: 20px;">
+                            <h4 style="color: #F57C00; margin-bottom: 12px;">Post-Trip Checklist</h4>
+                            <div class="checklist-item" onclick="toggleChecklistItem(this)" style="display: flex; align-items: center; margin-bottom: 8px; cursor: pointer;">
+                                <div class="checkbox" style="width: 20px; height: 20px; border: 2px solid #F57C00; border-radius: 4px; margin-right: 12px; display: flex; align-items: center; justify-content: center;"></div>
+                                <span>All passengers have alighted</span>
+                            </div>
+                            <div class="checklist-item" onclick="toggleChecklistItem(this)" style="display: flex; align-items: center; margin-bottom: 8px; cursor: pointer;">
+                                <div class="checkbox" style="width: 20px; height: 20px; border: 2px solid #F57C00; border-radius: 4px; margin-right: 12px; display: flex; align-items: center; justify-content: center;"></div>
+                                <span>Vehicle cleaned and inspected</span>
+                            </div>
+                            <div class="checklist-item" onclick="toggleChecklistItem(this)" style="display: flex; align-items: center; margin-bottom: 8px; cursor: pointer;">
+                                <div class="checkbox" style="width: 20px; height: 20px; border: 2px solid #F57C00; border-radius: 4px; margin-right: 12px; display: flex; align-items: center; justify-content: center;"></div>
+                                <span>No items left behind</span>
+                            </div>
+                            <div class="checklist-item" onclick="toggleChecklistItem(this)" style="display: flex; align-items: center; margin-bottom: 8px; cursor: pointer;">
+                                <div class="checkbox" style="width: 20px; height: 20px; border: 2px solid #F57C00; border-radius: 4px; margin-right: 12px; display: flex; align-items: center; justify-content: center;"></div>
+                                <span>Fuel level noted</span>
+                            </div>
+                        </div>
+
+                        <div style="background: #F5F5F5; padding: 16px; border-radius: 12px; margin-bottom: 20px;">
+                            <h4 style="margin-bottom: 12px;">Trip Feedback (Optional)</h4>
+                            <textarea placeholder="Any issues or feedback about this trip..." style="width: 100%; padding: 12px; border: 2px solid #E0E0E0; border-radius: 8px; font-size: 14px; resize: vertical; min-height: 80px; font-family: inherit;"></textarea>
+                        </div>
+
+                        <div style="display: flex; gap: 12px;">
+                            <button onclick="cancelEndTrip()" style="flex: 1; padding: 12px; background: #F5F5F5; color: #333; border: none; border-radius: 8px; cursor: pointer;">Cancel</button>
+                            <button id="confirmEndBtn" onclick="confirmEndTrip()" style="flex: 2; padding: 12px; background: #BDBDBD; color: white; border: none; border-radius: 8px; cursor: not-allowed;" disabled>
+                                ✅ Confirm End Trip
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="info-cards">
+                        <div class="info-card">
+                            <h4>Bus Number</h4>
+                            <p>DL-1234</p>
+                        </div>
+                        <div class="info-card">
+                            <h4>Route</h4>
+                            <p>Route 42A</p>
+                        </div>
+                        <div class="info-card">
+                            <h4>Total Trips</h4>
+                            <p id="totalTrips">12</p>
+                        </div>
+                        <div class="info-card">
+                            <h4>Today's Distance</h4>
+                            <p id="todayDistance">145 km</p>
+                        </div>
+                    </div>
+
+                    <div class="battery-reminder">
+                        <h4>⚡ Battery Reminder</h4>
+                        <p>Keep your GPS and phone charged for accurate location tracking</p>
+                    </div>
+                </div>
+
+                <!-- Route Screen -->
+                <div id="routeScreen" class="hidden">
+                    <div class="route-header" style="padding: 20px; background: white; margin: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                            <h3 style="color: #1976D2; margin: 0;">Route 42A Status</h3>
+                            <div id="gpsStatus" style="display: flex; align-items: center; gap: 8px; color: #4CAF50; font-size: 14px; font-weight: 500;">
+                                <div style="width: 8px; height: 8px; background: #4CAF50; border-radius: 50%; animation: pulse 2s infinite;"></div>
+                                GPS Active
+                            </div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                            <div style="text-align: center;">
+                                <div style="color: #666; font-size: 12px; text-transform: uppercase;">Current Speed</div>
+                                <div id="currentSpeed" style="color: #333; font-size: 20px; font-weight: bold;">45 km/h</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="color: #666; font-size: 12px; text-transform: uppercase;">Trip Progress</div>
+                                <div id="tripProgress" style="color: #333; font-size: 20px; font-weight: bold;">60%</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Enhanced Map Container -->
+                    <div class="map-container">
+                        <!-- Live Status Badge -->
+                        <div style="position: absolute; top: 12px; right: 12px; background: #4CAF50; color: white; padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; box-shadow: 0 2px 8px rgba(76,175,80,0.3);">
+                            🟢 LIVE
+                        </div>
+                        
+                        <!-- Direction Indicator -->
+                        <div style="position: absolute; top: 12px; left: 12px; background: white; padding: 8px; border-radius: 50%; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                            <div style="font-size: 16px; color: #1976D2;">🧭</div>
+                        </div>
+                        
+                        <!-- Main Map Visual -->
+                        <div style="text-align: center; padding: 20px;">
+                            <!-- Route Path Visual -->
+                            <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 16px; gap: 8px;">
+                                <div style="width: 12px; height: 12px; background: #4CAF50; border-radius: 50%; position: relative;">
+                                    <div style="position: absolute; top: -4px; left: -4px; width: 20px; height: 20px; border: 2px solid #4CAF50; border-radius: 50%; animation: pulse 2s infinite;"></div>
+                                </div>
+                                <div style="width: 40px; height: 3px; background: #1976D2; border-radius: 2px;"></div>
+                                <div style="width: 8px; height: 8px; background: #FF9800; border-radius: 50%;"></div>
+                                <div style="width: 40px; height: 3px; background: #E0E0E0; border-radius: 2px;"></div>
+                                <div style="width: 8px; height: 8px; background: #E0E0E0; border-radius: 50%;"></div>
+                                <div style="width: 40px; height: 3px; background: #E0E0E0; border-radius: 2px;"></div>
+                                <div style="width: 8px; height: 8px; background: #E0E0E0; border-radius: 50%;"></div>
+                            </div>
+                            
+                            <!-- Current Location -->
+                            <div style="background: white; padding: 12px 16px; border-radius: 12px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                                <div style="font-size: 14px; font-weight: 600; color: #1976D2; margin-bottom: 4px;">📍 YOU ARE HERE</div>
+                                <div style="font-size: 16px; font-weight: 600; color: #333;">Near City Mall Junction</div>
+                                <div style="font-size: 12px; color: #666;">Moving towards Central Bus Station</div>
+                            </div>
+                            
+                            <!-- Quick Stats -->
+                            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 12px;">
+                                <div style="background: rgba(255,255,255,0.9); padding: 8px; border-radius: 8px; text-align: center;">
+                                    <div style="font-size: 12px; color: #666;">SPEED</div>
+                                    <div style="font-size: 14px; font-weight: 600; color: #4CAF50;">45 km/h</div>
+                                </div>
+                                <div style="background: rgba(255,255,255,0.9); padding: 8px; border-radius: 8px; text-align: center;">
+                                    <div style="font-size: 12px; color: #666;">NEXT STOP</div>
+                                    <div style="font-size: 14px; font-weight: 600; color: #FF9800;">8 min</div>
+                                </div>
+                                <div style="background: rgba(255,255,255,0.9); padding: 8px; border-radius: 8px; text-align: center;">
+                                    <div style="font-size: 12px; color: #666;">PROGRESS</div>
+                                    <div style="font-size: 14px; font-weight: 600; color: #1976D2;">60%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="route-info">
+                        <!-- Enhanced Next Stop -->
+                        <div class="next-stop">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <div style="width: 32px; height: 32px; background: #1976D2; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 16px;">🚏</div>
+                                    <h3 style="margin: 0; color: #1976D2;">NEXT STOP</h3>
+                                </div>
+                                <button onclick="markStopCompleted()" style="background: #4CAF50; color: white; border: none; padding: 10px 16px; border-radius: 25px; font-size: 12px; font-weight: 600; cursor: pointer; box-shadow: 0 2px 8px rgba(76,175,80,0.3);">
+                                    ✓ ARRIVED
+                                </button>
+                            </div>
+                            
+                            <div style="background: white; padding: 16px; border-radius: 12px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                                <p style="font-size: 20px; margin: 0 0 8px 0; font-weight: 700; color: #333;">Central Bus Station</p>
+                                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                                    <div style="background: #4CAF50; color: white; padding: 6px 12px; border-radius: 20px; font-size: 14px; font-weight: 600;">
+                                        ⏱️ <span id="nextStopETA">8 minutes</span>
+                                    </div>
+                                    <div style="background: #FF9800; color: white; padding: 6px 12px; border-radius: 20px; font-size: 14px; font-weight: 600;">
+                                        📏 2.3 km
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Enhanced Stops List -->
+                        <div class="stops-list">
+                            <div style="background: #1976D2; color: white; padding: 16px; text-align: center;">
+                                <h4 style="margin: 0; font-size: 16px; font-weight: 600;">🚌 ROUTE 42A PROGRESS</h4>
+                            </div>
+                            
+                            <div class="stop-item completed" onclick="showStopDetails('Metro Station')" style="background: #E8F5E8; border-left: 6px solid #4CAF50;">
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <div style="width: 40px; height: 40px; background: #4CAF50; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px;">✓</div>
+                                    <div>
+                                        <div style="font-weight: 600; font-size: 16px; color: #333;">Metro Station</div>
+                                        <div style="font-size: 13px; color: #4CAF50; font-weight: 500;">✅ Completed at 09:15 AM</div>
+                                    </div>
+                                </div>
+                                <div style="color: #4CAF50; font-size: 12px; font-weight: 600;">DONE</div>
+                            </div>
+                            
+                            <div class="stop-item completed" onclick="showStopDetails('City Mall')" style="background: #E8F5E8; border-left: 6px solid #4CAF50;">
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <div style="width: 40px; height: 40px; background: #4CAF50; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px;">✓</div>
+                                    <div>
+                                        <div style="font-weight: 600; font-size: 16px; color: #333;">City Mall</div>
+                                        <div style="font-size: 13px; color: #4CAF50; font-weight: 500;">✅ Completed at 09:28 AM</div>
+                                    </div>
+                                </div>
+                                <div style="color: #4CAF50; font-size: 12px; font-weight: 600;">DONE</div>
+                            </div>
+                            
+                            <div class="stop-item current" onclick="showStopDetails('Central Bus Station')" style="background: #E3F2FD; border-left: 6px solid #1976D2; position: relative;">
+                                <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #1976D2 0%, #42A5F5 100%); animation: pulse 2s infinite;"></div>
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <div style="width: 40px; height: 40px; background: #1976D2; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; animation: pulse 2s infinite;">🚏</div>
+                                    <div>
+                                        <div style="font-weight: 600; font-size: 16px; color: #333;">Central Bus Station</div>
+                                        <div style="font-size: 13px; color: #1976D2; font-weight: 600;">🔄 Currently approaching - 8 min</div>
+                                    </div>
+                                </div>
+                                <div style="background: #1976D2; color: white; padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: 600;">NEXT</div>
+                            </div>
+                            
+                            <div class="stop-item" onclick="showStopDetails('Railway Station')" style="border-left: 6px solid #E0E0E0;">
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <div style="width: 40px; height: 40px; background: #E0E0E0; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #666; font-size: 18px;">🚏</div>
+                                    <div>
+                                        <div style="font-weight: 600; font-size: 16px; color: #333;">Railway Station</div>
+                                        <div style="font-size: 13px; color: #666; font-weight: 500;">⏰ ETA: 15 minutes</div>
+                                    </div>
+                                </div>
+                                <div style="background: #F5F5F5; color: #666; padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: 600;">UPCOMING</div>
+                            </div>
+                            
+                            <div class="stop-item" onclick="showStopDetails('Airport Terminal')" style="border-left: 6px solid #E0E0E0;">
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <div style="width: 40px; height: 40px; background: #E0E0E0; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #666; font-size: 18px;">✈️</div>
+                                    <div>
+                                        <div style="font-weight: 600; font-size: 16px; color: #333;">Airport Terminal</div>
+                                        <div style="font-size: 13px; color: #666; font-weight: 500;">⏰ ETA: 28 minutes</div>
+                                    </div>
+                                </div>
+                                <div style="background: #F5F5F5; color: #666; padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: 600;">FINAL</div>
+                            </div>
+                        </div>
+
+                        <div style="background: white; border-radius: 12px; padding: 20px; margin-top: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            <h4 style="margin: 0 0 12px 0; color: #333;">Quick Actions</h4>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                                <button onclick="reportDelay()" style="background: #FF9800; color: white; border: none; padding: 12px; border-radius: 8px; font-size: 14px; cursor: pointer;">
+                                    ⚠️ Report Delay
+                                </button>
+                                <button onclick="requestBreak()" style="background: #9C27B0; color: white; border: none; padding: 12px; border-radius: 8px; font-size: 14px; cursor: pointer;">
+                                    ☕ Request Break
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Messages Screen -->
+                <div id="messagesScreen" class="hidden">
+                    <div class="messages-content">
+                        <div class="message-item alert">
+                            <div class="message-header">
+                                <span class="message-type" style="color: #E53935;">Emergency Alert</span>
+                                <span class="message-time">2 min ago</span>
+                            </div>
+                            <div class="message-text">
+                                Heavy traffic reported on Route 42A near City Mall. Consider alternate route via Ring Road.
+                            </div>
+                        </div>
+
+                        <div class="message-item info">
+                            <div class="message-header">
+                                <span class="message-type" style="color: #1976D2;">Route Update</span>
+                                <span class="message-time">1 hour ago</span>
+                            </div>
+                            <div class="message-text">
+                                New bus stop added at Shopping Complex. Please update your route accordingly.
+                            </div>
+                        </div>
+
+                        <div class="message-item info">
+                            <div class="message-header">
+                                <span class="message-type" style="color: #1976D2;">Reminder</span>
+                                <span class="message-time">3 hours ago</span>
+                            </div>
+                            <div class="message-text">
+                                Monthly safety training scheduled for tomorrow at 9 AM. Attendance is mandatory.
+                            </div>
+                        </div>
+
+                        <button class="report-button" onclick="showReportModal()">
+                            🚨 Report Issue
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Profile Screen -->
+                <div id="profileScreen" class="hidden">
+                    <div class="profile-content">
+                        <div class="profile-header">
+                            <div class="profile-photo">RK</div>
+                            <div class="profile-name">Rajesh Kumar</div>
+                            <div class="profile-id">Driver ID: DRV001</div>
+                        </div>
+
+                        <div class="profile-section">
+                            <div class="profile-item">
+                                <span class="profile-label">Phone</span>
+                                <span class="profile-value">+91 98765 43210</span>
+                            </div>
+                            <div class="profile-item">
+                                <span class="profile-label">Bus Number</span>
+                                <span class="profile-value">DL-1234</span>
+                            </div>
+                            <div class="profile-item">
+                                <span class="profile-label">Route</span>
+                                <span class="profile-value">Route 42A</span>
+                            </div>
+                            <div class="profile-item">
+                                <span class="profile-label">License</span>
+                                <span class="profile-value">DL123456789</span>
+                            </div>
+                        </div>
+
+                        <div class="settings-section">
+                            <div class="setting-item" onclick="toggleDarkMode()">
+                                <span>Dark Mode</span>
+                                <div class="toggle-switch" id="darkModeToggle"></div>
+                            </div>
+                            <div class="setting-item">
+                                <span>Language</span>
+                                <div class="language-selector">
+                                    <button class="lang-btn active" onclick="setLanguage('en')">EN</button>
+                                    <button class="lang-btn" onclick="setLanguage('hi')">हिं</button>
+                                    <button class="lang-btn" onclick="setLanguage('pa')">ਪੰ</button>
+                                </div>
+                            </div>
+                            <div class="setting-item">
+                                <span>Notifications</span>
+                                <div class="toggle-switch active" onclick="toggleNotifications(this)"></div>
+                            </div>
+                        </div>
+
+                        <button class="logout-button" onclick="logout()">
+                            Logout
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Navigation -->
+            <div class="bottom-nav">
+                <div class="nav-item active" onclick="showScreen('home')">
+                    <div class="nav-icon icon-dashboard"></div>
+                    <div class="nav-label">Dashboard</div>
+                </div>
+                <div class="nav-item" onclick="showScreen('route')">
+                    <div class="nav-icon icon-route"></div>
+                    <div class="nav-label">My Route</div>
+                </div>
+                <div class="nav-item" onclick="showScreen('messages')">
+                    <div class="nav-icon icon-alerts"></div>
+                    <div class="nav-label">Alerts</div>
+                </div>
+                <div class="nav-item" onclick="showScreen('profile')">
+                    <div class="nav-icon icon-driver"></div>
+                    <div class="nav-label">Driver</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Report Modal -->
+        <div id="reportModal" class="modal-overlay hidden">
+            <div class="modal">
+                <h3>Report Issue</h3>
+                <div class="form-group">
+                    <label>Issue Type</label>
+                    <select style="width: 100%; padding: 16px; border: 2px solid #E0E0E0; border-radius: 12px; font-size: 16px;">
+                        <option>Bus Breakdown</option>
+                        <option>Accident</option>
+                        <option>Road Block</option>
+                        <option>Traffic Jam</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea placeholder="Describe the issue in detail..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>📷 Add Photo (Optional)</label>
+                    <input type="file" accept="image/*" style="width: 100%; padding: 16px; border: 2px solid #E0E0E0; border-radius: 12px;">
+                </div>
+                <div class="modal-buttons">
+                    <button class="btn-secondary" onclick="hideReportModal()">Cancel</button>
+                    <button class="btn-primary small" onclick="submitReport()">Submit Report</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentScreen = 'home';
+        let isOnTrip = false;
+        let tripStartTime = null;
+        let tripTimer = null;
+        let currentLanguage = 'en';
+        let isDarkMode = false;
+
+        // Login Functions
+        function sendOTP() {
+            const phoneInput = document.getElementById('phoneInput');
+            const phone = phoneInput.value.trim();
+            
+            if (!phone || phone.length < 10) {
+                showError('Please enter a valid phone number');
+                return;
+            }
+
+            // Hide phone login, show OTP screen
+            document.getElementById('phoneLogin').classList.add('hidden');
+            document.getElementById('otpLogin').classList.remove('hidden');
+            document.getElementById('loginError').classList.add('hidden');
+            
+            // Focus first OTP input
+            document.querySelector('.otp-input').focus();
+        }
+
+        function moveToNext(input, index) {
+            if (input.value.length === 1 && index < 5) {
+                document.querySelectorAll('.otp-input')[index + 1].focus();
+            }
+            
+            // Auto-verify if all fields filled
+            const otpInputs = document.querySelectorAll('.otp-input');
+            const otp = Array.from(otpInputs).map(input => input.value).join('');
+            if (otp.length === 6) {
+                setTimeout(verifyOTP, 500);
+            }
+        }
+
+        function verifyOTP() {
+            const otpInputs = document.querySelectorAll('.otp-input');
+            const otp = Array.from(otpInputs).map(input => input.value).join('');
+            
+            if (otp.length !== 6) {
+                showError('Please enter complete OTP');
+                return;
+            }
+
+            // Mock verification - accept 123456 as valid OTP
+            if (otp === '123456') {
+                // Login successful
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('mainApp').classList.remove('hidden');
+            } else {
+                showError('Invalid OTP. Try 123456 for demo');
+                // Clear OTP inputs
+                otpInputs.forEach(input => input.value = '');
+                otpInputs[0].focus();
+            }
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('loginError');
+            errorDiv.textContent = message;
+            errorDiv.classList.remove('hidden');
+        }
+
+        // Navigation Functions
+        function showScreen(screen) {
+            // Hide all screens
+            document.querySelectorAll('[id$="Screen"]').forEach(el => {
+                el.classList.add('hidden');
+            });
+            
+            // Show selected screen
+            document.getElementById(screen + 'Screen').classList.remove('hidden');
+            
+            // Update navigation
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            
+            // Update header title
+            const titles = {
+                home: 'Arivo Driver App',
+                route: 'My Route & Navigation',
+                messages: 'Admin Alerts & Reports',
+                profile: 'Driver Profile'
+            };
+            document.getElementById('screenTitle').textContent = titles[screen];
+            currentScreen = screen;
+        }
+
+        // Trip Functions
+        function showStartTripDetails() {
+            document.getElementById('tripStartSection').classList.add('hidden');
+            document.getElementById('startTripDetails').classList.remove('hidden');
+            
+            // Set current time
+            const now = new Date();
+            document.getElementById('startTimeDisplay').textContent = now.toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            // Check if all checklist items are completed
+            updateStartTripButton();
+        }
+
+        function cancelStartTrip() {
+            document.getElementById('startTripDetails').classList.add('hidden');
+            document.getElementById('tripStartSection').classList.remove('hidden');
+            
+            // Reset checklist
+            document.querySelectorAll('#startTripDetails .checkbox').forEach(checkbox => {
+                checkbox.innerHTML = '';
+                checkbox.style.background = 'transparent';
+            });
+            updateStartTripButton();
+        }
+
+        function confirmStartTrip() {
+            // Start the actual trip
+            isOnTrip = true;
+            tripStartTime = new Date();
+            
+            // Update UI
+            document.getElementById('startTripDetails').classList.add('hidden');
+            document.getElementById('activeTripSection').classList.remove('hidden');
+            
+            const statusBadge = document.getElementById('statusBadge');
+            statusBadge.textContent = 'Online';
+            statusBadge.className = 'status-badge online';
+            
+            // Start timer
+            tripTimer = setInterval(updateTripTime, 1000);
+            updateTripTime();
+            
+            showNotification('Trip started successfully! Safe driving!');
+        }
+
+        function showEndTripDetails() {
+            document.getElementById('activeTripSection').classList.add('hidden');
+            document.getElementById('endTripDetails').classList.remove('hidden');
+            
+            // Update trip summary with current data
+            if (tripStartTime) {
+                const duration = new Date() - tripStartTime;
+                const hours = Math.floor(duration / (1000 * 60 * 60));
+                const minutes = Math.floor((duration % (1000 * 60 * 60)) / (1000 * 60));
+                document.getElementById('finalTripDuration').textContent = `${hours}h ${minutes}m`;
+            }
+            
+            // Simulate trip data
+            document.getElementById('tripDistance').textContent = (Math.random() * 20 + 30).toFixed(1) + ' km';
+            document.getElementById('totalPassengers').textContent = Math.floor(Math.random() * 50 + 100);
+            
+            updateEndTripButton();
+        }
+
+        function cancelEndTrip() {
+            document.getElementById('endTripDetails').classList.add('hidden');
+            document.getElementById('activeTripSection').classList.remove('hidden');
+            
+            // Reset checklist
+            document.querySelectorAll('#endTripDetails .checkbox').forEach(checkbox => {
+                checkbox.innerHTML = '';
+                checkbox.style.background = 'transparent';
+            });
+            updateEndTripButton();
+        }
+
+        function confirmEndTrip() {
+            // End the actual trip
+            isOnTrip = false;
+            const endTime = new Date();
+            
+            // Stop timer
+            if (tripTimer) {
+                clearInterval(tripTimer);
+                tripTimer = null;
+            }
+            
+            // Update UI
+            document.getElementById('endTripDetails').classList.add('hidden');
+            document.getElementById('tripStartSection').classList.remove('hidden');
+            
+            const statusBadge = document.getElementById('statusBadge');
+            statusBadge.textContent = 'Offline';
+            statusBadge.className = 'status-badge offline';
+            
+            // Update trip count
+            const totalTripsEl = document.getElementById('totalTrips');
+            const currentTrips = parseInt(totalTripsEl.textContent);
+            totalTripsEl.textContent = currentTrips + 1;
+            
+            // Update distance
+            const distanceEl = document.getElementById('todayDistance');
+            const currentDistance = parseFloat(distanceEl.textContent);
+            const tripDistance = parseFloat(document.getElementById('tripDistance').textContent);
+            distanceEl.textContent = (currentDistance + tripDistance).toFixed(1) + ' km';
+            
+            tripStartTime = null;
+            
+            showNotification('Trip completed successfully! Thank you for safe driving.');
+        }
+
+        function toggleChecklistItem(item) {
+            const checkbox = item.querySelector('.checkbox');
+            const isChecked = checkbox.innerHTML === '✓';
+            
+            if (isChecked) {
+                checkbox.innerHTML = '';
+                checkbox.style.background = 'transparent';
+            } else {
+                checkbox.innerHTML = '✓';
+                checkbox.style.background = checkbox.style.borderColor;
+                checkbox.style.color = 'white';
+            }
+            
+            // Update button states
+            if (item.closest('#startTripDetails')) {
+                updateStartTripButton();
+            } else if (item.closest('#endTripDetails')) {
+                updateEndTripButton();
+            }
+        }
+
+        function updateStartTripButton() {
+            const checkboxes = document.querySelectorAll('#startTripDetails .checkbox');
+            const checkedCount = Array.from(checkboxes).filter(cb => cb.innerHTML === '✓').length;
+            const button = document.getElementById('confirmStartBtn');
+            
+            if (checkedCount === checkboxes.length) {
+                button.disabled = false;
+                button.style.background = '#4CAF50';
+                button.style.cursor = 'pointer';
+            } else {
+                button.disabled = true;
+                button.style.background = '#BDBDBD';
+                button.style.cursor = 'not-allowed';
+            }
+        }
+
+        function updateEndTripButton() {
+            const checkboxes = document.querySelectorAll('#endTripDetails .checkbox');
+            const checkedCount = Array.from(checkboxes).filter(cb => cb.innerHTML === '✓').length;
+            const button = document.getElementById('confirmEndBtn');
+            
+            if (checkedCount === checkboxes.length) {
+                button.disabled = false;
+                button.style.background = '#E53935';
+                button.style.cursor = 'pointer';
+            } else {
+                button.disabled = true;
+                button.style.background = '#BDBDBD';
+                button.style.cursor = 'not-allowed';
+            }
+        }
+
+        function updateTripTime() {
+            if (!tripStartTime) return;
+            
+            const now = new Date();
+            const diff = now - tripStartTime;
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            
+            const timeString = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById('tripTime').textContent = `Trip Duration: ${timeString}`;
+        }
+
+        // Report Functions
+        function showReportModal() {
+            document.getElementById('reportModal').classList.remove('hidden');
+        }
+
+        function hideReportModal() {
+            document.getElementById('reportModal').classList.add('hidden');
+        }
+
+        function submitReport() {
+            showNotification('Report submitted successfully! Admin has been notified.');
+            hideReportModal();
+        }
+
+        // Settings Functions
+        function toggleDarkMode() {
+            isDarkMode = !isDarkMode;
+            const toggle = document.getElementById('darkModeToggle');
+            
+            if (isDarkMode) {
+                toggle.classList.add('active');
+                document.body.style.filter = 'invert(1) hue-rotate(180deg)';
+                showNotification('Dark mode enabled');
+            } else {
+                toggle.classList.remove('active');
+                document.body.style.filter = 'none';
+                showNotification('Dark mode disabled');
+            }
+        }
+
+        function setLanguage(lang) {
+            currentLanguage = lang;
+            
+            // Update active language button
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            
+            const languages = {
+                en: 'English',
+                hi: 'Hindi',
+                pa: 'Punjabi'
+            };
+            
+            showNotification(`Language changed to ${languages[lang]}`);
+        }
+
+        function toggleNotifications(toggle) {
+            toggle.classList.toggle('active');
+            const enabled = toggle.classList.contains('active');
+            showNotification(`Notifications ${enabled ? 'enabled' : 'disabled'}`);
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                // Reset app state
+                isOnTrip = false;
+                tripStartTime = null;
+                if (tripTimer) {
+                    clearInterval(tripTimer);
+                    tripTimer = null;
+                }
+                
+                // Reset UI
+                document.getElementById('mainApp').classList.add('hidden');
+                document.getElementById('loginScreen').classList.remove('hidden');
+                document.getElementById('phoneLogin').classList.remove('hidden');
+                document.getElementById('otpLogin').classList.add('hidden');
+                document.getElementById('loginError').classList.add('hidden');
+                
+                // Clear inputs
+                document.getElementById('phoneInput').value = '';
+                document.getElementById('driverIdInput').value = '';
+                document.querySelectorAll('.otp-input').forEach(input => input.value = '');
+                
+                showNotification('Logged out successfully');
+            }
+        }
+
+        // Route Functions
+        function markStopCompleted() {
+            showNotification('Stop marked as completed! Moving to next stop.');
+            
+            // Update next stop ETA
+            const nextStopETA = document.getElementById('nextStopETA');
+            nextStopETA.textContent = '12 minutes';
+            
+            // Update trip progress
+            const tripProgress = document.getElementById('tripProgress');
+            const currentProgress = parseInt(tripProgress.textContent);
+            tripProgress.textContent = Math.min(currentProgress + 20, 100) + '%';
+        }
+
+        function showStopDetails(stopName) {
+            showNotification(`Viewing details for ${stopName}`);
+        }
+
+        function reportDelay() {
+            showNotification('Delay reported to admin. Passengers will be notified.');
+        }
+
+        function requestBreak() {
+            showNotification('Break request sent to admin. Awaiting approval.');
+        }
+
+        // Utility Functions
+        function showNotification(message) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: #333;
+                color: white;
+                padding: 12px 20px;
+                border-radius: 8px;
+                z-index: 2000;
+                font-size: 14px;
+                max-width: 300px;
+                text-align: center;
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 3000);
+        }
+
+        // Simulate real-time updates
+        function updateRouteData() {
+            if (currentScreen === 'route' && isOnTrip) {
+                // Update speed randomly
+                const speeds = ['42 km/h', '48 km/h', '35 km/h', '52 km/h', '40 km/h'];
+                const speedElement = document.getElementById('currentSpeed');
+                if (speedElement) {
+                    speedElement.textContent = speeds[Math.floor(Math.random() * speeds.length)];
+                }
+                
+                // Update ETA
+                const etaElement = document.getElementById('nextStopETA');
+                if (etaElement) {
+                    const currentETA = parseInt(etaElement.textContent);
+                    if (currentETA > 1) {
+                        etaElement.textContent = (currentETA - 1) + ' minutes';
+                    }
+                }
+            }
+        }
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set initial focus on phone input
+            document.getElementById('phoneInput').focus();
+            
+            // Add some demo notifications
+            setTimeout(() => {
+                if (document.getElementById('mainApp').classList.contains('hidden')) {
+                    showNotification('Demo: Use phone +91 98765 43210 and OTP 123456');
+                }
+            }, 2000);
+            
+            // Start real-time updates
+            setInterval(updateRouteData, 5000);
+        });
+
+        // Handle keyboard navigation for OTP inputs
+        document.addEventListener('keydown', function(e) {
+            if (e.target.classList.contains('otp-input')) {
+                if (e.key === 'Backspace' && e.target.value === '') {
+                    const inputs = document.querySelectorAll('.otp-input');
+                    const currentIndex = Array.from(inputs).indexOf(e.target);
+                    if (currentIndex > 0) {
+                        inputs[currentIndex - 1].focus();
+                    }
+                }
+            }
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98194a6cf3f991ac',t:'MTc1ODI4NzA4Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
